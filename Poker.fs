@@ -178,7 +178,7 @@ module Poker =
     //        let test = "3D AD 3C 3S 4C QC AS 5D TH 8C"
     //        printfn "%A"  (test |> extractTwoHandsOf5 |> fst |> List.ofSeq |> List.map Option.get |> findHand)
 
-            hands |> Seq.map getResultWithHand //|> Seq.filter (fun x -> x = Win)
+            hands |> Seq.map getResultWithHand |> Seq.filter (fun (_, _, result) -> result = Win)
 
         let royalFlush = [(NumberCard 10, Clubs); (FaceCard FaceCardType.Jack, Clubs); (FaceCard FaceCardType.Queen, Clubs); (FaceCard FaceCardType.King, Clubs); (FaceCard FaceCardType.Ace, Clubs)]
         let straightFlush = [(NumberCard 9, Clubs); (NumberCard 10, Clubs); (FaceCard FaceCardType.Jack, Clubs); (FaceCard FaceCardType.Queen, Clubs); (FaceCard FaceCardType.King, Clubs)]
@@ -192,11 +192,13 @@ module Poker =
         let pair = [(NumberCard 9, Clubs); (NumberCard 9, Spades); (FaceCard FaceCardType.Jack, Hearts); (FaceCard FaceCardType.King, Clubs); (FaceCard FaceCardType.Ace, Clubs)]
         let highCard = [(NumberCard 9, Clubs); (NumberCard 1, Spades); (FaceCard FaceCardType.Jack, Hearts); (FaceCard FaceCardType.King, Clubs); (FaceCard FaceCardType.Ace, Clubs)]
 
-        printfn "%A" (findHand straight)
-        printfn "%A" (findHand notStraight1)
+//        printfn "%A" (findHand straight)
+//        printfn "%A" (findHand notStraight1)
 
         let lineList = lines |> Seq.toList
         let output = playerOneHands |> Seq.map (fun (x, y, z) -> (Option.get x, Option.get y, z)) |> Seq.zip lineList |> Seq.map (sprintf "%A")
         File.WriteAllLines("C:\Users\Mendel\Documents\Visual Studio 2015\Projects\ProjectEuler\output.txt", output)
+
+        playerOneHands |> Seq.length
 
     printfn "%A" Problem54
