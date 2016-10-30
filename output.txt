@@ -33,7 +33,7 @@
 ("3D KH QD 6C 6S AD AS 8H 2H QS",
  ((Pair, NumberCard 6), (Pair, FaceCard Ace), Lose))
 ("6S 8D 4C 8S 6C QH TC 6D 7D 9D",
- ((Straight, NumberCard 8), (HighCard, FaceCard Queen), Win))
+ ((TwoPair, NumberCard 8), (HighCard, FaceCard Queen), Win))
 ("2S 8D 8C 4C TS 9S 9D 9C AC 3D",
  ((Pair, NumberCard 8), (ThreeOfAKind, NumberCard 9), Lose))
 ("3C QS 2S 4H JH 3D 2D TD 8S 9H",
@@ -47,7 +47,7 @@
 ("5S 4D JS 3D 8H 6C TS 3S AD 8C",
  ((HighCard, FaceCard Jack), (HighCard, FaceCard Ace), Lose))
 ("6D 7C 5D 5H 3S 5C JC 2H 5S 3D",
- ((Straight, NumberCard 7), (Pair, NumberCard 5), Win))
+ ((Pair, NumberCard 5), (Pair, NumberCard 5), Draw))
 ("5H 6H 2S KS 3D 5D JD 7H JS 8H",
  ((HighCard, FaceCard King), (Pair, FaceCard Jack), Lose))
 ("KH 4H AS JS QS QC TC 6D 7C KS",
@@ -135,7 +135,7 @@
 ("7C 3C TH 5S 8H 8C 9C JD TC KD",
  ((HighCard, NumberCard 10), (HighCard, FaceCard King), Lose))
 ("QC TC JD TS 8C 3H 6H KD 7C TD",
- ((Straight, FaceCard Queen), (HighCard, FaceCard King), Win))
+ ((Pair, NumberCard 10), (HighCard, FaceCard King), Win))
 ("JH QS KS 9C 6D 6S AS 9H KH 6H",
  ((HighCard, FaceCard King), (Pair, NumberCard 6), Lose))
 ("2H 4D AH 2D JH 6H TD 5D 4H JD",
@@ -173,7 +173,7 @@
 ("KC 2H AC AH 7D JH KH 5D 7S 6D",
  ((Pair, FaceCard Ace), (HighCard, FaceCard King), Win))
 ("9S 5S 9C 6H 8S TD JD 9H 6C AC",
- ((Straight, NumberCard 9), (HighCard, FaceCard Ace), Win))
+ ((Pair, NumberCard 9), (HighCard, FaceCard Ace), Win))
 ("7D 8S 6D TS KD 7H AC 5S 7C 5D",
  ((HighCard, FaceCard King), (TwoPair, NumberCard 7), Lose))
 ("AH QC JC 4C TC 8C 2H TS 2C 7D",
@@ -181,7 +181,7 @@
 ("KD KC 6S 3D 7D 2S 8S 3H 5S 5C",
  ((Pair, FaceCard King), (Pair, NumberCard 5), Win))
 ("8S 5D 8H 4C 6H KC 3H 7C 5S KD",
- ((Straight, NumberCard 8), (Pair, FaceCard King), Win))
+ ((Pair, NumberCard 8), (Pair, FaceCard King), Lose))
 ("JH 8C 3D 3C 6C KC TD 7H 7C 4C",
  ((Pair, NumberCard 3), (Pair, NumberCard 7), Lose))
 ("JC KC 6H TS QS TD KS 8H 8C 9S",
@@ -191,13 +191,13 @@
 ("4D 4S 8H TD 9C 3S 7D 9D AS TH",
  ((Pair, NumberCard 4), (HighCard, FaceCard Ace), Win))
 ("6S 7D 3C 6H 5D KD 2C 5C 9D 9C",
- ((Straight, NumberCard 7), (Pair, NumberCard 9), Win))
+ ((Pair, NumberCard 6), (Pair, NumberCard 9), Lose))
 ("2H KC 3D AD 3H QD QS 8D JC 4S",
  ((Pair, NumberCard 3), (Pair, FaceCard Queen), Lose))
 ("8C 3H 9C 7C AD 5D JC 9D JS AS",
  ((HighCard, FaceCard Ace), (Pair, FaceCard Jack), Lose))
 ("5D 9H 5C 7H 6S 6C QC JC QD 9S",
- ((Straight, NumberCard 9), (Pair, FaceCard Queen), Win))
+ ((Pair, NumberCard 5), (Pair, FaceCard Queen), Lose))
 ("JC QS JH 2C 6S 9C QC 3D 4S TC",
  ((Pair, FaceCard Jack), (HighCard, FaceCard Queen), Win))
 ("4H 5S 8D 3D 4D 2S KC 2H JS 2C",
@@ -217,7 +217,7 @@
 ("5H 3S JH 9H 2S 2C 6S 7S AS KS",
  ((HighCard, FaceCard Jack), (HighCard, FaceCard Ace), Lose))
 ("8C QD JC QS TC QC 4H AC KH 6C",
- ((Straight, FaceCard Queen), (HighCard, FaceCard Ace), Win))
+ ((Pair, FaceCard Queen), (HighCard, FaceCard Ace), Win))
 ("TC 5H 7D JH 4H 2H 8D JC KS 4D",
  ((HighCard, FaceCard Jack), (HighCard, FaceCard King), Lose))
 ("5S 9C KH KD 9H 5C TS 3D 7D 2D",
@@ -233,7 +233,7 @@
 ("KD 6H 2H TH 8S QD KS 9D 9H AS",
  ((HighCard, FaceCard King), (Pair, NumberCard 9), Lose))
 ("4H 8H 8D 5H 6C AH 5S AS AD 8S",
- ((Straight, NumberCard 8), (ThreeOfAKind, FaceCard Ace), Win))
+ ((Pair, NumberCard 8), (ThreeOfAKind, FaceCard Ace), Lose))
 ("QS 5D 4S 2H TD KS 5H AC 3H JC",
  ((HighCard, FaceCard Queen), (HighCard, FaceCard Ace), Lose))
 ("9C 7D QD KD AC 6D 5H QH 6H 5S",
@@ -253,13 +253,13 @@
 ("TD TS 7C AD JC QD 9H 3C KC 7H",
  ((Pair, NumberCard 10), (HighCard, FaceCard King), Win))
 ("5D 4D 5S 8H 4H 7D 3H JD KD 2D",
- ((Straight, NumberCard 8), (HighCard, FaceCard King), Win))
+ ((TwoPair, NumberCard 5), (HighCard, FaceCard King), Win))
 ("JH TD 6H QS 4S KD 5C 8S 7D 8H",
  ((HighCard, FaceCard Queen), (Pair, NumberCard 8), Lose))
 ("AC 3D AS 8C TD 7H KH 5D 6C JD",
  ((Pair, FaceCard Ace), (HighCard, FaceCard King), Win))
 ("9D KS 7C 6D QH TC JD KD AS KC",
- ((HighCard, FaceCard King), (Straight, FaceCard Ace), Lose))
+ ((HighCard, FaceCard King), (Pair, FaceCard King), Lose))
 ("JH 8S 5S 7S 7D AS 2D 3D AD 2H",
  ((Pair, NumberCard 7), (TwoPair, FaceCard Ace), Lose))
 ("2H 5D AS 3C QD KC 6H 9H 9S 2C",
@@ -307,9 +307,9 @@
 ("TH 7S 3D AS 6C 4C 7H 7D 4H AH",
  ((HighCard, FaceCard Ace), (TwoPair, NumberCard 7), Lose))
 ("5C 2H KS 6H 7S 4H 5H 3D 3C 7H",
- ((HighCard, FaceCard King), (Straight, NumberCard 7), Lose))
+ ((HighCard, FaceCard King), (Pair, NumberCard 3), Lose))
 ("3C 9S AC 7S QH 2H 3D 6S 3S 3H",
- ((HighCard, FaceCard Ace), (Straight, NumberCard 6), Lose))
+ ((HighCard, FaceCard Ace), (ThreeOfAKind, NumberCard 3), Lose))
 ("2D 3H AS 2C 6H TC JS 6S 9C 6C",
  ((Pair, NumberCard 2), (Pair, NumberCard 6), Lose))
 ("QH KD QD 6D AC 6H KH 2C TS 8C",
@@ -327,13 +327,13 @@
 ("6H QS 6C TC QD 9H 7D 7C 5H 4D",
  ((TwoPair, FaceCard Queen), (Pair, NumberCard 7), Win))
 ("TD 9D 8D 6S 6C TC 5D TS JS 8H",
- ((Straight, NumberCard 10), (Pair, NumberCard 10), Win))
+ ((Pair, NumberCard 6), (Pair, NumberCard 10), Lose))
 ("4H KC JD 9H TC 2C 6S 5H 8H AS",
  ((HighCard, FaceCard King), (HighCard, FaceCard Ace), Lose))
 ("JS 9C 5C 6S 9D JD 8H KC 4C 6D",
  ((Pair, NumberCard 9), (HighCard, FaceCard King), Win))
 ("4D 8D 8S 6C 7C 6H 7H 8H 5C KC",
- ((Straight, NumberCard 8), (HighCard, FaceCard King), Win))
+ ((Pair, NumberCard 8), (HighCard, FaceCard King), Win))
 ("TC 3D JC 6D KS 9S 6H 7S 9C 2C",
  ((HighCard, FaceCard King), (Pair, NumberCard 9), Lose))
 ("6C 3S KD 5H TS 7D 9H 9S 6H KH",
@@ -385,7 +385,7 @@
 ("9D 3D JS TH AC 5H 3H 8S 3S TC",
  ((HighCard, FaceCard Ace), (Pair, NumberCard 3), Lose))
 ("QD KH JS KS 9S QC 8D AH 3C AC",
- ((Straight, FaceCard King), (Pair, FaceCard Ace), Win))
+ ((Pair, FaceCard King), (Pair, FaceCard Ace), Lose))
 ("5H 6C KH 3S 9S JH 2D QD AS 8C",
  ((HighCard, FaceCard King), (HighCard, FaceCard Ace), Lose))
 ("6C 4D 7S 7H 5S JC 6S 9H 4H JH",
@@ -431,7 +431,7 @@
 ("TC KC 8C 9S 4C JS 3C JC 6S AH",
  ((HighCard, FaceCard King), (Pair, FaceCard Jack), Lose))
 ("AS 7D QC 3D 5S JC JD 9D TD KH",
- ((HighCard, FaceCard Ace), (Straight, FaceCard King), Lose))
+ ((HighCard, FaceCard Ace), (Pair, FaceCard Jack), Lose))
 ("TH 3C 2S 6H AH AC 5H 5C 7S 8H",
  ((HighCard, FaceCard Ace), (Pair, NumberCard 5), Lose))
 ("QC 2D AC QD 2S 3S JD QS 6S 8H",
@@ -459,7 +459,7 @@
 ("7H KD AH 4D KH 5C 4S 2D KC QH",
  ((Pair, FaceCard King), (HighCard, FaceCard King), Win))
 ("6S 2C TD JC AS 4D 6C 8C 4H 5S",
- ((HighCard, FaceCard Ace), (Straight, NumberCard 8), Lose))
+ ((HighCard, FaceCard Ace), (Pair, NumberCard 4), Lose))
 ("JC TC JD 5S 6S 8D AS 9D AD 3S",
  ((Pair, FaceCard Jack), (Pair, FaceCard Ace), Lose))
 ("6D 6H 5D 5S TC 3D 7D QS 9D QD",
@@ -519,7 +519,7 @@
 ("4C 7C 3D QC TC 4S KH 8C 2D JS",
  ((HighCard, FaceCard Queen), (HighCard, FaceCard King), Lose))
 ("6H 5D 7S 5H 9C 9H JH 8S TH 7H",
- ((Straight, NumberCard 9), (Straight, FaceCard Jack), Lose))
+ ((Pair, NumberCard 5), (Straight, FaceCard Jack), Lose))
 ("AS JS 2S QD KH 8H 4S AC 8D 8S",
  ((HighCard, FaceCard Ace), (ThreeOfAKind, NumberCard 8), Lose))
 ("3H 4C TD KD 8C JC 5C QS 2D JD",
@@ -549,7 +549,7 @@
 ("5D AS 8S 6S 4C AH QC QD TH 7H",
  ((HighCard, FaceCard Ace), (Pair, FaceCard Queen), Lose))
 ("3H 4H 7D 6S 4S 9H AS 8H JS 9D",
- ((Straight, NumberCard 7), (Pair, NumberCard 9), Win))
+ ((Pair, NumberCard 4), (Pair, NumberCard 9), Lose))
 ("JD 8C 2C 9D 7D 5H 5S 9S JC KD",
  ((HighCard, FaceCard Jack), (Pair, NumberCard 5), Lose))
 ("KD 9C 4S QD AH 7C AD 9D AC TD",
@@ -639,7 +639,7 @@
 ("3C QH JH AD 6S AH KC 8S 6D 6H",
  ((HighCard, FaceCard Ace), (Pair, NumberCard 6), Lose))
 ("3D 7C 4C 7S 5S 3S 6S 5H JC 3C",
- ((Straight, NumberCard 7), (Pair, NumberCard 3), Win))
+ ((Pair, NumberCard 7), (Pair, NumberCard 3), Win))
 ("QH 7C 5H 3C 3S 8C TS 4C KD 9C",
  ((Pair, NumberCard 3), (HighCard, FaceCard King), Win))
 ("QD 3S 7S 5H 7H QH JC 7C 8C KD",
@@ -663,7 +663,7 @@
 ("9S 8C 7H 3H 6S 7C AS 9H JD KH",
  ((HighCard, NumberCard 9), (HighCard, FaceCard Ace), Lose))
 ("3D 3H 7S 4D 6C 7C AC 2H 9C TH",
- ((Straight, NumberCard 7), (HighCard, FaceCard Ace), Win))
+ ((Pair, NumberCard 3), (HighCard, FaceCard Ace), Win))
 ("4H 5S 3H AC TC TH 9C 9H 9S 8D",
  ((HighCard, FaceCard Ace), (ThreeOfAKind, NumberCard 9), Lose))
 ("8D 9H 5H 4D 6C 2H QD 6S 5D 3S",
@@ -683,7 +683,7 @@
 ("5D 9S 8H 2H 3D TC AH JC KD 9C",
  ((HighCard, NumberCard 9), (HighCard, FaceCard Ace), Lose))
 ("9D QD JC 2H 6D KH TS 9S QH TH",
- ((HighCard, FaceCard Queen), (Straight, FaceCard King), Lose))
+ ((HighCard, FaceCard Queen), (Pair, NumberCard 10), Lose))
 ("2C 8D 4S JD 5H 3H TH TC 9C KC",
  ((HighCard, FaceCard Jack), (Pair, NumberCard 10), Lose))
 ("AS 3D 9H 7D 4D TH KH 2H 7S 3H",
@@ -725,7 +725,7 @@
 ("2D 5S 2H 9C 6H 9S TD QC 7D TC",
  ((Pair, NumberCard 2), (Pair, NumberCard 10), Lose))
 ("3S 2H KS TS 2C 9C 8S JS 9D 7D",
- ((Pair, NumberCard 2), (Straight, FaceCard Jack), Lose))
+ ((Pair, NumberCard 2), (Pair, NumberCard 9), Lose))
 ("3C KC 6D 5D 6C 6H 8S AS 7S QS",
  ((Pair, NumberCard 6), (HighCard, FaceCard Ace), Win))
 ("JH 9S 2H 8D 4C 8H 9H AD TH KH",
@@ -751,7 +751,7 @@
 ("9H KS 4H 3S 5C 5D KH 6H 6S JS",
  ((HighCard, FaceCard King), (Pair, NumberCard 6), Lose))
 ("KC AS 8C 4C JC KH QC TH QD AH",
- ((HighCard, FaceCard Ace), (Straight, FaceCard Ace), Lose))
+ ((HighCard, FaceCard Ace), (Pair, FaceCard Queen), Lose))
 ("6S KH 9S 2C 5H TC 3C 7H JC 4D",
  ((HighCard, FaceCard King), (HighCard, FaceCard Jack), Win))
 ("JD 4S 6S 5S 8D 7H 7S 4D 4C 2H",
@@ -763,7 +763,7 @@
 ("8C QS 5C 5D 3H JS AH KC 4S 9D",
  ((Pair, NumberCard 5), (HighCard, FaceCard Ace), Win))
 ("TS JD 8S QS TH JH KH 2D QD JS",
- ((Straight, FaceCard Queen), (Pair, FaceCard Jack), Win))
+ ((Pair, NumberCard 10), (Pair, FaceCard Jack), Lose))
 ("JD QC 5D 6S 9H 3S 2C 8H 9S TS",
  ((HighCard, FaceCard Queen), (HighCard, NumberCard 10), Win))
 ("2S 4C AD 7H JC 5C 2D 6D 4H 3D",
@@ -877,7 +877,7 @@
 ("8D 5S 2H 9D 3H 8C 4C 4H 3C TH",
  ((HighCard, NumberCard 9), (Pair, NumberCard 4), Lose))
 ("JC TH 4S 6S JD 2D 4D 6C 3D 4C",
- ((Pair, FaceCard Jack), (Straight, NumberCard 6), Lose))
+ ((Pair, FaceCard Jack), (Pair, NumberCard 4), Win))
 ("TS 3S 2D 4H AC 2C 6S 2H JH 6H",
  ((HighCard, FaceCard Ace), (TwoPair, NumberCard 6), Lose))
 ("TD 8S AD TC AH AC JH 9S 6S 7S",
@@ -889,11 +889,11 @@
 ("2D 4H 3D 6C 8C 7S AD 5D 5C 8S",
  ((HighCard, NumberCard 8), (Pair, NumberCard 5), Lose))
 ("TD 5D 7S 9C 4S 5H 6C 8C 4C 8S",
- ((HighCard, NumberCard 10), (Straight, NumberCard 8), Lose))
+ ((HighCard, NumberCard 10), (Pair, NumberCard 8), Lose))
 ("JS QH 9C AS 5C QS JC 3D QC 7C",
  ((HighCard, FaceCard Ace), (Pair, FaceCard Queen), Lose))
 ("JC 9C KH JH QS QC 2C TS 3D AD",
- ((Straight, FaceCard King), (HighCard, FaceCard Ace), Win))
+ ((Pair, FaceCard Jack), (HighCard, FaceCard Ace), Win))
 ("5D JH AC 5C 9S TS 4C JD 8C KS",
  ((Pair, NumberCard 5), (HighCard, FaceCard King), Win))
 ("KC AS 2D KH 9H 2C 5S 4D 3D 6H",
@@ -975,7 +975,7 @@
 ("JS 4S 2C 7C TH 6C AS KS 7S JD",
  ((HighCard, FaceCard Jack), (HighCard, FaceCard Ace), Lose))
 ("JH 7C 9H 7H TC 5H 3D 6D 5D 4D",
- ((Straight, FaceCard Jack), (Pair, NumberCard 5), Win))
+ ((Pair, NumberCard 7), (Pair, NumberCard 5), Win))
 ("2C QD JH 2H 9D 5S 3D TD AD KS",
  ((Pair, NumberCard 2), (HighCard, FaceCard Ace), Win))
 ("JD QH 3S 4D TH 7D 6S QS KS 4H",
@@ -1057,9 +1057,9 @@
 ("8D TC KS KD 9S 6D AD JD 5C 2S",
  ((Pair, FaceCard King), (HighCard, FaceCard Ace), Win))
 ("7H 8H 6C QD 2H 6H 9D TC 9S 7C",
- ((HighCard, FaceCard Queen), (Straight, NumberCard 10), Lose))
+ ((HighCard, FaceCard Queen), (Pair, NumberCard 9), Lose))
 ("8D 6D 4C 7C 6C 3C TH KH JS JH",
- ((Straight, NumberCard 8), (Pair, FaceCard Jack), Win))
+ ((Pair, NumberCard 6), (Pair, FaceCard Jack), Lose))
 ("5S 3S 8S JS 9H AS AD 8H 7S KD",
  ((HighCard, FaceCard Jack), (Pair, FaceCard Ace), Lose))
 ("JH 7C 2C KC 5H AS AD 9C 9S JS",
@@ -1091,7 +1091,7 @@
 ("5S 6S 9S 8D TH AS KH 5H 5C 8S",
  ((HighCard, NumberCard 10), (Pair, NumberCard 5), Lose))
 ("JD 2S 9S 6S 5S 8S 5D 7S 7H 9D",
- ((HighCard, FaceCard Jack), (Straight, NumberCard 9), Lose))
+ ((HighCard, FaceCard Jack), (Pair, NumberCard 7), Lose))
 ("5D 8C 4C 9D AD TS 2C 7D KD TC",
  ((HighCard, FaceCard Ace), (Pair, NumberCard 10), Lose))
 ("8S QS 4D KC 5C 8D 4S KH JD KD",
@@ -1131,7 +1131,7 @@
 ("AD 2H 7D KC 2C 4C 2S 9S 7H 3S",
  ((Pair, NumberCard 2), (HighCard, NumberCard 9), Win))
 ("TH 4C 8S 6S 3S AD KS AS JH TD",
- ((HighCard, NumberCard 10), (Straight, FaceCard Ace), Lose))
+ ((HighCard, NumberCard 10), (Pair, FaceCard Ace), Lose))
 ("5C TD 4S 4D AD 6S 5D TC 9C 7D",
  ((Pair, NumberCard 4), (HighCard, NumberCard 10), Win))
 ("8H 3S 4D 4S 5S 6H 5C AC 3H 3D",
@@ -1255,7 +1255,7 @@
 ("2H 7D QC 6S TC TS AH 7S 9D 3H",
  ((HighCard, FaceCard Queen), (HighCard, FaceCard Ace), Lose))
 ("TH 5H QD 9S KS 7S 7C 6H 8C TD",
- ((HighCard, FaceCard King), (Straight, NumberCard 10), Lose))
+ ((HighCard, FaceCard King), (Pair, NumberCard 7), Lose))
 ("TH 2D 4D QC 5C 7D JD AH 9C 4H",
  ((HighCard, FaceCard Queen), (HighCard, FaceCard Ace), Lose))
 ("4H 3H AH 8D 6H QC QH 9H 2H 2C",
@@ -1317,7 +1317,7 @@
 ("2C QD 2S 2H JC 9C 5D 2D JD JH",
  ((ThreeOfAKind, NumberCard 2), (Pair, FaceCard Jack), Win))
 ("7C 5C 9C 8S 7D 6D 8D 6C 9S JH",
- ((Straight, NumberCard 9), (Pair, NumberCard 6), Win))
+ ((Pair, NumberCard 7), (Pair, NumberCard 6), Win))
 ("2C AD 6S 5H 3S KS 7S 9D KH 4C",
  ((HighCard, FaceCard Ace), (Pair, FaceCard King), Lose))
 ("7H 6C 2C 5C TH 9D 8D 3S QC AH",
@@ -1345,7 +1345,7 @@
 ("6S 4C 7H 8C 3H 5H JC AH 9D 9C",
  ((HighCard, NumberCard 8), (Pair, NumberCard 9), Lose))
 ("2S 7C 5S JD 8C 3S 3D 4D 7D 6S",
- ((HighCard, FaceCard Jack), (Straight, NumberCard 7), Lose))
+ ((HighCard, FaceCard Jack), (Pair, NumberCard 3), Lose))
 ("3C KC 4S 5D 7D 3D JD 7H 3H 4H",
  ((HighCard, FaceCard King), (Pair, NumberCard 3), Lose))
 ("9C 9H 4H 4D TH 6D QD 8S 9S 7S",
@@ -1381,7 +1381,7 @@
 ("9D 9H JH TC QH 3C 2S JS 5C 7H",
  ((Pair, NumberCard 9), (HighCard, FaceCard Jack), Win))
 ("6C 3S 3D 2S 4S QD 2D TH 5D 2C",
- ((Straight, NumberCard 6), (Pair, NumberCard 2), Win))
+ ((Pair, NumberCard 3), (Pair, NumberCard 2), Win))
 ("2D 6H 6D 2S JC QH AS 7H 4H KH",
  ((TwoPair, NumberCard 6), (HighCard, FaceCard Ace), Win))
 ("5H 6S KS AD TC TS 7C AC 4S 4H",
@@ -1401,7 +1401,7 @@
 ("2C AC 5H KD 5S 7H QD JH AH 2D",
  ((Pair, NumberCard 5), (HighCard, FaceCard Ace), Win))
 ("JC QH 8D 8S TC 5H 5C AH 8C 6C",
- ((Straight, FaceCard Queen), (Pair, NumberCard 5), Win))
+ ((Pair, NumberCard 8), (Pair, NumberCard 5), Win))
 ("3H JS 8S QD JH 3C 4H 6D 5C 3S",
  ((Pair, FaceCard Jack), (Pair, NumberCard 3), Win))
 ("6D 4S 4C AH 5H 5S 3H JD 7C 8D",
@@ -1441,7 +1441,7 @@
 ("8S QH 2C 4D KC JS QC 9D AC 6H",
  ((HighCard, FaceCard King), (HighCard, FaceCard Ace), Lose))
 ("8S 8C 7C JS JD 6S 4C 9C AC 4S",
- ((Straight, FaceCard Jack), (Pair, NumberCard 4), Win))
+ ((TwoPair, FaceCard Jack), (Pair, NumberCard 4), Win))
 ("QH 5D 2C 7D JC 8S 2D JS JH 4C",
  ((HighCard, FaceCard Queen), (Pair, FaceCard Jack), Lose))
 ("JS 4C 7S TS JH KC KH 5H QD 4S",
@@ -1491,7 +1491,7 @@
 ("4C 3H QS QC 9S 9H 6D KC 9D 9C",
  ((Pair, FaceCard Queen), (ThreeOfAKind, NumberCard 9), Lose))
 ("5C AD 8C 2C QH TH QD JC 8D 8H",
- ((HighCard, FaceCard Ace), (Straight, FaceCard Queen), Lose))
+ ((HighCard, FaceCard Ace), (Pair, NumberCard 8), Lose))
 ("QC 2C 2S QD 9C 4D 3S 8D JH QS",
  ((TwoPair, FaceCard Queen), (HighCard, FaceCard Queen), Win))
 ("9D 3S 2C 7S 7C JC TD 3C TC 9H",
@@ -1577,7 +1577,7 @@
 ("3C JS 4S 6D 5H 2S QH 6S 9C 2C",
  ((HighCard, FaceCard Jack), (Pair, NumberCard 2), Lose))
 ("3D 5S 6S 9S 4C QS 8D QD 8S TC",
- ((HighCard, NumberCard 9), (Straight, FaceCard Queen), Lose))
+ ((HighCard, NumberCard 9), (TwoPair, FaceCard Queen), Lose))
 ("9C 3D AH 9H 5S 2C 7D AD JC 3S",
  ((Pair, NumberCard 9), (HighCard, FaceCard Ace), Win))
 ("7H TC AS 3C 6S 6D 7S KH KC 9H",
@@ -1591,7 +1591,7 @@
 ("2D 6S 4C 4D 8S AD 4S TC AH 9H",
  ((Pair, NumberCard 4), (Pair, FaceCard Ace), Lose))
 ("TS AC QC TH KC 6D 4H 7S 8C 2H",
- ((Straight, FaceCard Ace), (HighCard, NumberCard 8), Win))
+ ((Pair, NumberCard 10), (HighCard, NumberCard 8), Win))
 ("3C QD JS 9D 5S JC AH 2H TS 9H",
  ((HighCard, FaceCard Queen), (HighCard, FaceCard Ace), Lose))
 ("3H 4D QH 5D 9C 5H 7D 4S JC 3S",
@@ -1721,7 +1721,7 @@
 ("7C 4D 5S JD JH 7D AC KD KH 4H",
  ((Pair, FaceCard Jack), (Pair, FaceCard King), Lose))
 ("7D 6C 8D 8H 5C JH 8S QD TH JD",
- ((Pair, NumberCard 8), (Straight, FaceCard Queen), Lose))
+ ((Pair, NumberCard 8), (Pair, FaceCard Jack), Lose))
 ("8D 7D 6C 7C 9D KD AS 5C QH JH",
  ((Pair, NumberCard 7), (HighCard, FaceCard Ace), Win))
 ("9S 2C 8C 3C 4C KS JH 2D 8D 4H",
@@ -1795,7 +1795,7 @@
 ("3S 9S TC 6S 8H 2D AD 7S 8S TS",
  ((HighCard, NumberCard 10), (HighCard, FaceCard Ace), Lose))
 ("3C 6H 9C 3H 5C JC 8H QH TD QD",
- ((Pair, NumberCard 3), (Straight, FaceCard Queen), Lose))
+ ((Pair, NumberCard 3), (Pair, FaceCard Queen), Lose))
 ("3C JS QD 5D TD 2C KH 9H TH AS",
  ((HighCard, FaceCard Queen), (HighCard, FaceCard Ace), Lose))
 ("9S TC JD 3D 5C 5H AD QH 9H KC",
@@ -1817,7 +1817,7 @@
 ("3C KH QC 6D 8H 3S AH 7D TD 2D",
  ((HighCard, FaceCard King), (HighCard, FaceCard Ace), Lose))
 ("5S 9H QH 4S 6S 6C 6D TS TH 7S",
- ((HighCard, FaceCard Queen), (Straight, NumberCard 10), Lose))
+ ((HighCard, FaceCard Queen), (TwoPair, NumberCard 10), Lose))
 ("6C 4C 6D QS JS 9C TS 3H 8D 8S",
  ((Pair, NumberCard 6), (Pair, NumberCard 8), Lose))
 ("JS 5C 7S AS 2C AH 2H AD 5S TC",
@@ -1903,7 +1903,7 @@
 ("2D 4H 5D 7D QC AD AH 9H QH 8H",
  ((HighCard, FaceCard Queen), (Pair, FaceCard Ace), Lose))
 ("KD 8C JS 9D 3S 3C 2H 5D 6D 2S",
- ((HighCard, FaceCard King), (Straight, NumberCard 6), Lose))
+ ((HighCard, FaceCard King), (Pair, NumberCard 2), Lose))
 ("8S 6S TS 3C 6H 8D 5S 3H TD 6C",
  ((Pair, NumberCard 6), (HighCard, NumberCard 10), Win))
 ("KS 3D JH 9C 7C 9S QS 5S 4H 6H",
@@ -1939,7 +1939,7 @@
 ("2C 7D 9H 4D KS 4C QH AD KD JS",
  ((HighCard, FaceCard King), (HighCard, FaceCard Ace), Lose))
 ("QD AD AH KH 9D JS 9H JC KD JD",
- ((Pair, FaceCard Ace), (Straight, FaceCard King), Lose))
+ ((Pair, FaceCard Ace), (ThreeOfAKind, FaceCard Jack), Lose))
 ("8S 3C 4S TS 7S 4D 5C 2S 6H 7C",
  ((HighCard, NumberCard 10), (HighCard, NumberCard 7), Win))
 ("JS 7S 5C KD 6D QH 8S TD 2H 6S",

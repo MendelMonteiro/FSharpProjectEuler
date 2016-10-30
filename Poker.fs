@@ -5,9 +5,9 @@ open System
 
 module Poker =
 
-    type Suit = Hearts | Clubs | Spades | Diamonds
-    type FaceCardType = Jack = 11 | Queen = 12 | King = 13 | Ace = 14
-    type HandType = HighCard | Pair | TwoPair | ThreeOfAKind | Straight | Flush | FullHouse | FourOfAKind | StraightFlush | RoyalFlush
+    type Suit = | Hearts | Clubs | Spades | Diamonds
+    type FaceCardType = | Jack = 11 | Queen = 12 | King = 13 | Ace = 14
+    type HandType = | HighCard | Pair | TwoPair | ThreeOfAKind | Straight | Flush | FullHouse | FourOfAKind | StraightFlush | RoyalFlush
 
     type CardValue = 
         | NumberCard of int
@@ -16,7 +16,7 @@ module Poker =
     type Card = CardValue * Suit
 
     type Hand = HandType * CardValue
-    type Result = Win | Lose | Draw
+    type Result = | Win | Lose | Draw
 
     let Problem54 =
         let matchCard x : CardValue = 
@@ -30,9 +30,9 @@ module Poker =
 
         let matchSuit x = 
             match x with
-            | 'C' -> Some Clubs
-            | 'D' -> Some Diamonds
-            | 'H' -> Some Hearts
+            | 'C' -> Some Clubs 
+            | 'D' -> Some Diamonds 
+            | 'H' -> Some Hearts 
             | 'S' -> Some Spades
             | _ -> None
 
@@ -58,7 +58,10 @@ module Poker =
 
         let isStraight xs : Hand option = 
             let sorted = xs |> List.sortBy cardValue
-            let matches = (List.last sorted |> cardValue) - (List.head sorted |> cardValue) = List.length xs - 1
+            let last = List.last sorted |> cardValue
+            let first = List.head sorted |> cardValue
+            let isDistinct = sorted |> List.distinctBy fst |> List.length = (sorted |> List.length)
+            let matches = isDistinct && last - first = List.length xs - 1
             tryGetHand sorted matches Straight
         
         let valueIsNotRepeated xs = xs |> List.distinctBy cardValue |> List.length = (xs |> List.length)
@@ -164,6 +167,9 @@ module Poker =
                 | (Some (h, c), Some(yh, yc)) when h < yh -> Lose
                 | _ -> Lose
 
+            let test = getResult (Some (Straight, FaceCard FaceCardType.Ace)) (Some (Pair, NumberCard 5))
+            printfn "%A" test
+
             let getResultWithHand (x, y) =
                 let playerOneHand = x |> List.ofSeq |> findHand
                 let playerTwoHand = y |> List.ofSeq |> findHand
@@ -177,6 +183,7 @@ module Poker =
         let royalFlush = [(NumberCard 10, Clubs); (FaceCard FaceCardType.Jack, Clubs); (FaceCard FaceCardType.Queen, Clubs); (FaceCard FaceCardType.King, Clubs); (FaceCard FaceCardType.Ace, Clubs)]
         let straightFlush = [(NumberCard 9, Clubs); (NumberCard 10, Clubs); (FaceCard FaceCardType.Jack, Clubs); (FaceCard FaceCardType.Queen, Clubs); (FaceCard FaceCardType.King, Clubs)]
         let straight = [(NumberCard 10, Hearts); (FaceCard FaceCardType.Jack, Clubs); (FaceCard FaceCardType.Queen, Clubs); (FaceCard FaceCardType.King, Clubs); (FaceCard FaceCardType.Ace, Clubs)]
+        let notStraight1 = [(NumberCard 6, Hearts); (NumberCard 7, Clubs); (NumberCard 5, Clubs); (NumberCard 5, Hearts); (NumberCard 3, Clubs)]
         let flush = [(NumberCard 9, Clubs); (FaceCard FaceCardType.Jack, Clubs); (FaceCard FaceCardType.Queen, Clubs); (FaceCard FaceCardType.King, Clubs); (FaceCard FaceCardType.Ace, Clubs)]
         let fourOfAKind = [(NumberCard 9, Clubs); (NumberCard 9, Spades); (NumberCard 9, Hearts); (NumberCard 9, Diamonds); (FaceCard FaceCardType.Ace, Clubs)]
         let threeOfAKind = [(NumberCard 9, Clubs); (NumberCard 9, Spades); (NumberCard 9, Hearts); (FaceCard FaceCardType.King, Clubs); (FaceCard FaceCardType.Ace, Clubs)]
@@ -185,7 +192,8 @@ module Poker =
         let pair = [(NumberCard 9, Clubs); (NumberCard 9, Spades); (FaceCard FaceCardType.Jack, Hearts); (FaceCard FaceCardType.King, Clubs); (FaceCard FaceCardType.Ace, Clubs)]
         let highCard = [(NumberCard 9, Clubs); (NumberCard 1, Spades); (FaceCard FaceCardType.Jack, Hearts); (FaceCard FaceCardType.King, Clubs); (FaceCard FaceCardType.Ace, Clubs)]
 
-        printfn "%A" (findHand fullHouse)
+        printfn "%A" (findHand straight)
+        printfn "%A" (findHand notStraight1)
 
         let lineList = lines |> Seq.toList
         let output = playerOneHands |> Seq.map (fun (x, y, z) -> (Option.get x, Option.get y, z)) |> Seq.zip lineList |> Seq.map (sprintf "%A")
