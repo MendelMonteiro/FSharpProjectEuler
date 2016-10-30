@@ -1,7 +1,5 @@
 ﻿namespace ProjectEuler
 
-//open Microsoft.FSharp.Math
-
 module Answers =
 
     let problem1 = 
