@@ -54,7 +54,8 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Problems.fs" />
-    <Compile Include="Poker.fs" />
+    <Compile Include="54-Poker.fs" />
+    <Compile Include="96-Sudoku.fs" />
     <Content Include="App.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
