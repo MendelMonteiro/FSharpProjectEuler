@@ -32,6 +32,11 @@ module Sudoku =
 
     type Board = {name : string; nonets : Nonet list; horizontalLines : Line list; verticalLines : Line list}
 
+    let rec transpose matrix =
+        match matrix with
+        | (_::_)::_ -> List.map List.head matrix :: transpose(List.map List.tail matrix)
+        | _ -> []
+
     let parseFile rawLines =
         let parseNonetFromRaw horizontalPos nonetLines =
             let parseNonetLine r chars = 
@@ -47,11 +52,19 @@ module Sudoku =
             { cells = vals }
 
         let parseBoard (name :: nonetLines : string list) =
-            let nonet1 = nonetLines |> parseNonetFromRaw 0
-            let nonet2 = nonetLines |> parseNonetFromRaw 1
-            let nonet3 = nonetLines |> parseNonetFromRaw 2
-            
-            let board = {name = name; nonets = [nonet1; nonet2; nonet3]; horizontalLines = []; verticalLines = []}
+            let getHorizontalLinesForRow nonetRow =
+                nonetRow |> List.map (List.chunkBySize NonetSize) |> transpose |> List.map List.concat
+
+            let getHorizontalLines xs =
+                xs
+                |> List.map (fun x -> x.cells |> List.map (fun y -> {cell = y; nonet = x}))
+                |> List.chunkBySize NonetSize
+                |> getHorizontalLinesForRow
+                |> List.concat
+
+            let nonets = [0..2] |> List.map (fun x -> nonetLines |> parseNonetFromRaw x)
+
+            let board = {name = name; nonets = nonets; horizontalLines = (nonets |> getHorizontalLines); verticalLines = []}
             board
 
         rawLines 
