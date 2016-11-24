@@ -1,6 +1,7 @@
 ﻿namespace ProjectEuler
 
 open System.IO
+open Shared
 
 module Sudoku = 
     [<Literal>]
@@ -53,32 +54,6 @@ module Sudoku =
           horizontalLines : Line list
           verticalLines : Line list }
     
-    let rec transpose matrix = 
-        match matrix with
-        | (_ :: _) :: _ -> List.map List.head matrix :: transpose (List.map List.tail matrix)
-        | _ -> []
-    
-    let rec stitch xss = 
-        match xss with
-        | x :: xs when List.length x > 1 -> (xss |> List.map List.head) :: stitch (xss |> List.map List.tail)
-        | x :: xs -> [ xss |> List.map List.head ]
-        | _ -> []
-    
-    let printLines xs = 
-        printfn "["
-        xs |> List.iter (fun x -> 
-                  printf "\t[ "
-                  List.iter (printf "%A; ") x
-                  printfn "]")
-        printfn "]"
-    
-    let rec printManyLines xss =
-        printfn "----- %A" (List.length xss)
-        match xss with
-        | xs :: xss -> printLines xs 
-                       printManyLines xss
-        | [] -> ()
-
     let parseNonetFromRaw nonetLines horizontalPos = 
         let parseNonetLine r chars = 
             chars |> List.mapi (fun c x -> 
@@ -142,6 +117,7 @@ module Sudoku =
                   horizontalLines = (nonets |> getHorizontalLines)
                   verticalLines = (nonets |> getVerticalLines) }
             board
+
         rawLines
         |> List.chunkBySize (1 + NonetSize * BoardSize)
         |> List.take 1

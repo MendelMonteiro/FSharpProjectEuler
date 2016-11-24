@@ -53,6 +53,7 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Shared.fs" />
     <Compile Include="Problems.fs" />
     <Compile Include="54-Poker.fs" />
     <Compile Include="96-Sudoku.fs" />
