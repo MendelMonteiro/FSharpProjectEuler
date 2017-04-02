@@ -19,12 +19,28 @@ module Sudoku =
         let sb = System.Text.StringBuilder(xs.Length)
         xs |> List.iter (sb.Append >> ignore)
         sb.ToString()
-    
-    [<StructuredFormatDisplay("({col}, {row}) => {value}")>]
+
+    type CellValue =
+        | ValidValue of int
+        | NoValue
+
+    let printCellValue x = 
+        match x with 
+        | ValidValue v -> v.ToString()
+        | NoValue -> "_"
+
+    let isValidValue x = 
+        match x with 
+        | ValidValue v -> true
+        | NoValue -> false
+
+    [<StructuredFormatDisplay("({col}, {row}) => {Display}")>]
     type Cell = 
         { row : int
           col : int
-          value : int }
+          value : CellValue }
+        
+        member m.Display = printCellValue m.value
     
     [<StructuredFormatDisplay("{cells}")>]
     type Nonet = 
@@ -46,6 +62,10 @@ module Sudoku =
           down : Nonet option }
     
     type Line = CellInNonet list
+
+    type CellWithCandidates =
+        { cell : Cell
+          candidates : int list }
     
     [<StructuredFormatDisplay("{name} {nonets}")>]
     type Board = 
@@ -54,12 +74,17 @@ module Sudoku =
           horizontalLines : Line list
           verticalLines : Line list }
     
-    let parseNonetFromRaw nonetLines horizontalPos = 
+    let parseNonetFromRaw nonetLines horizontalPos =
+        let parseNonetValue x =
+            match x with
+            | 0 -> NoValue
+            | _ -> ValidValue x
+     
         let parseNonetLine r chars = 
             chars |> List.mapi (fun c x -> 
                          { row = r
                            col = c
-                           value = System.Int32.Parse(x.ToString()) })
+                           value = System.Int32.Parse(x.ToString()) |> parseNonetValue  })
         
         // 3 lines with other nonets in it
         let vals = 
@@ -76,26 +101,23 @@ module Sudoku =
         { cells = vals; rows = r; cols = r |> transpose }
     
     let attachCellsToNonets f xs = 
-        xs |> List.map (fun x -> 
-                  x
+        xs |> List.map (fun nonet -> 
+                  nonet
                   |> f
-                  |> List.map (fun y -> 
-                         y |> List.map (fun z -> 
-                                  { cell = z
-                                    nonet = x })))
+                  |> List.map (fun line -> line |> List.map (fun cell -> { cell = cell; nonet = nonet })))
     
     let parseFile rawLines = 
         let parseBoard (name :: rawNonetLines : string list) = 
             let getHorizontalLines xs = 
                 xs
-                |> attachCellsToNonets (fun x -> x.rows)
+                |> attachCellsToNonets (fun nonet -> nonet.rows)
                 |> List.chunkBySize (BoardSize)
                 |> List.collect (transpose)
                 |> List.map (fun xs -> xs |> List.concat)
             
             let getVerticalLines xs = 
                 xs
-                |> attachCellsToNonets (fun x -> x.cols)
+                |> attachCellsToNonets (fun nonet -> nonet.cols)
                 |> List.concat
                 |> List.chunkBySize (NonetSize)
                 |> List.chunkBySize (BoardSize)
@@ -118,11 +140,55 @@ module Sudoku =
                   verticalLines = (nonets |> getVerticalLines) }
             board
 
-        rawLines
+        rawLines   
         |> List.chunkBySize (1 + NonetSize * BoardSize)
         |> List.take 1
         |> List.map parseBoard
-    
+        
+
+    let fillInCandidates board =
+        let getCandidates (cells : Line) =
+            let candidates = cells 
+                             |> List.choose (fun x -> match x.cell.value with 
+                                                      | ValidValue v -> Some v
+                                                      | NoValue -> None)
+            [1..9] |> List.except candidates
+
+        let getAllCandidates (row : Line) rowIndex col colIndex =
+            let cell = (List.item colIndex row).cell
+            let candidates = match cell.value with
+                             | NoValue -> (getCandidates row) |> List.except (getCandidates col)
+                             | ValidValue v -> []
+
+            let cellWithCandidate = { cell = cell
+                                      candidates = candidates }
+            cellWithCandidate
+        
+        let findCandidates rows cols = 
+            rows
+            |> List.mapi (fun i row -> cols |> List.mapi (fun j col -> getAllCandidates row i col j))
+        
+        let assignDefiniteCandidates candidates =
+            let assign cell =
+                match cell.candidates with
+                | [x] -> { cell = { row = cell.cell.row; col = cell.cell.col; value = ValidValue x }; candidates = [] }
+                | _ -> cell
+
+            candidates 
+            |> List.map (fun row -> row |> List.map (fun cell -> assign cell))
+
+        let hasAssignable (c : CellWithCandidates list list) = 
+            let onlyOneCandidate = c |> List.concat |> List.filter (fun cell -> cell.candidates.Length = 1)
+            onlyOneCandidate.Length > 1
+        
+        let candidates = findCandidates board.horizontalLines board.verticalLines
+
+        let assignable = hasAssignable candidates
+        printfn "Has assignable: %A" assignable
+        
+        let assigned = candidates |> assignDefiniteCandidates
+        assigned
+
     let answer = 
         let filePath = "C:\Users\Mendel\Documents\Visual Studio 2015\Projects\ProjectEuler\p096_sudoku.txt"
         let rawLines = System.IO.File.ReadLines(filePath)
@@ -131,3 +197,6 @@ module Sudoku =
         board.horizontalLines |> printLines
         printfn "Vertical lines"
         board.verticalLines |> printLines
+
+        let candidatesFilled = fillInCandidates board
+        candidatesFilled |> printLines
