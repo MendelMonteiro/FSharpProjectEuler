@@ -145,23 +145,31 @@ module Sudoku =
         |> List.take 1
         |> List.map parseBoard
         
+    let cellValues cells =
+        cells |> List.choose (fun x -> match x.value with 
+                                       | ValidValue v -> Some v
+                                       | NoValue -> None)
 
     let fillInCandidates board =
-        let getCandidates (cells : Line) =
-            let candidates = cells 
-                             |> List.choose (fun x -> match x.value with 
-                                                      | ValidValue v -> Some v
-                                                      | NoValue -> None)
-            [1..9] |> List.except candidates
+        let lineCandidates cells rowIndex colIndex =
+            let candidates = cells |> cellValues
+            let ret = [1..9] |> List.except candidates
+            ret
+        
+        let intersectionCandidates row rowIndex col colIndex =
+            let candidateSet = Set.ofList (lineCandidates row rowIndex colIndex) |> Set.intersect (Set.ofList (lineCandidates col rowIndex colIndex))
+            candidateSet
 
         let getAllCandidates (row : Line) rowIndex col colIndex =
             let cell = List.item colIndex row
             let candidates = match cell.value with
-                             | NoValue -> (getCandidates row) |> List.except (getCandidates col)
+                             | NoValue -> List.ofSeq (intersectionCandidates row rowIndex col colIndex)
                              | ValidValue v -> []
+             
+            let onlyOneCandidates = if candidates.Length = 1 then candidates else []
 
             let cellWithCandidate = { cell = cell
-                                      candidates = candidates }
+                                      candidates = onlyOneCandidates }
             cellWithCandidate
         
         let findCandidates rows cols = 
@@ -172,6 +180,7 @@ module Sudoku =
             let assign cell =
                 match cell.candidates with
                 | [x] -> { cell = { row = cell.cell.row; col = cell.cell.col; value = ValidValue x }; candidates = [] }
+                | [] -> cell
                 | _ -> cell
 
             candidates 
@@ -179,7 +188,7 @@ module Sudoku =
 
         let hasAssignable (c : CellWithCandidates list list) = 
             let onlyOneCandidate = c |> List.concat |> List.filter (fun cell -> cell.candidates.Length = 1)
-            onlyOneCandidate.Length > 1
+            onlyOneCandidate.Length > 0
         
         let candidates = findCandidates board.horizontalLines board.verticalLines
 
@@ -197,11 +206,11 @@ module Sudoku =
             |> List.concat
             |> List.map (fun nonet -> { cells = nonet; rows = nonet |> rowsFromNonet; cols = nonet |> colsFromNonet })
 
-        let toVerticalLines cellList =
+        let toVerticalLines (cellList : Cell list list list) =
             cellList
-            |> List.map transpose
             |> transpose
-            |> List.map List.concat
+            |> List.map transpose
+            |> List.concat
             
         let toHorizontalLines cellList =
             cellList
@@ -216,10 +225,11 @@ module Sudoku =
 
         let assignable = hasAssignable candidates
         printfn "Has assignable: %A" assignable
-        
+
         let assigned = candidates |> assignDefiniteCandidates
-        let a = assigned |> List.map (fun x -> x |> List.map (fun y -> y.cell)) |> List.map (fun x -> x |> List.chunkBySize NonetSize)
-        toBoard a
+        let nonets = assigned |> List.map (fun x -> x |> List.map (fun y -> y.cell)) |> List.map (fun x -> x |> List.chunkBySize NonetSize)
+        nonets |> printLines
+        toBoard nonets
 
     let answer = 
         let filePath = "C:\Users\Mendel\Documents\Visual Studio 2015\Projects\ProjectEuler\p096_sudoku.txt"
@@ -232,4 +242,7 @@ module Sudoku =
 
         printfn "Filled in candidates"
         let candidatesFilled = fillInCandidates board
+        printfn "Horizontal lines"
         candidatesFilled.horizontalLines |> printLines
+        printfn "Vertical lines"
+        candidatesFilled.verticalLines |> printLines
