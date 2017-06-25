@@ -164,7 +164,7 @@ module Sudoku =
                                        | NoValue -> None)
 
     // Fill in candidates method
-    let fillInCandidates board =
+    let rec fillInCandidates board =
         let candidatesInLine cells =
             let existing = cells |> cellValues
             let ret = [1..9] |> List.except existing
@@ -220,23 +220,18 @@ module Sudoku =
             let colsFromNonet nonet = nonet |> rowsFromNonet |> transpose
             { num = num; cells = nonet; rows = nonet |> rowsFromNonet; cols = nonet |> colsFromNonet }
 
-        let toVerticalLines cellList =
-            cellList
-            |> transpose
-            |> List.map transpose
-            |> List.concat
-            
-        let toHorizontalLines cellList =
-            cellList
-            |> List.map List.concat
-
         let assign cell =
                 match cell.candidates with
                 | [x] -> { cell = { row = cell.cell.row; col = cell.cell.col; absRow = cell.cell.absRow; absCol = cell.cell.absCol; value = ValidValue x }; candidates = [] }
                 | _ -> cell
         
         let ignoreCandidates x = x |> List.map (fun y -> y.cell)
-        let findAndAssignCandidates nonet = findCandidates nonet |> List.map assign |> ignoreCandidates
+
+        let findAndAssignCandidates nonet = 
+            let candidates = findCandidates nonet 
+            let hasAssignable = candidates |> List.exists (fun c -> c.candidates.Length = 1)
+            let assigned = candidates |> List.map assign |> ignoreCandidates
+            (hasAssignable, assigned)
 
         let replaceNonetIn board nonetIndex nonet = 
             let switchAt i x j y = if i = j then x else y
@@ -246,16 +241,21 @@ module Sudoku =
               horizontalLines = board.nonets |> getHorizontalLines
               verticalLines = board.nonets |> getVerticalLines }
 
-        let rec assignAndReplaceBoard board nonetIndex =
+        let rec assignAndReplaceBoard board nonetIndex assignedCandidates =
             let currentNonet = board.nonets |> List.skip nonetIndex |> List.tryHead
             match currentNonet with
-            | Some n -> let newBoard = findAndAssignCandidates n
+            | Some n -> let (hasAssignable, assigned) = findAndAssignCandidates n
+                        let newBoard =  assigned
                                         |> cellsToNonet n.num
                                         |> replaceNonetIn board nonetIndex
-                        assignAndReplaceBoard newBoard (nonetIndex + 1)
-            | _ -> board
+                        assignAndReplaceBoard newBoard (nonetIndex + 1) (assignedCandidates || hasAssignable)
+            | _ -> (assignedCandidates, board)
             
-        assignAndReplaceBoard board 0
+        let (assignedCandidates, newBoard) = assignAndReplaceBoard board 0 false
+        if assignedCandidates then
+            fillInCandidates newBoard
+        else
+            newBoard
 
 
     // Find the answer
