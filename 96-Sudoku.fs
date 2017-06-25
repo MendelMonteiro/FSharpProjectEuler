@@ -175,19 +175,20 @@ module Sudoku =
             let colCandidates = candidatesInLine col
             let candidateSet = Set.ofList rowCandidates |> Set.intersect (Set.ofList colCandidates)
             let withoutExisting = candidateSet - existingInNonet
-            printfn "%A" col
-            printfn "%A" colCandidates
+            //printfn "%A" col
+            //printfn "%A" colCandidates
             withoutExisting
 
         let intersectionCandidatesForCell rows cols existingInNonet cell =
-            let row = rows |> List.item cell.absCol
-            let col = cols |> List.item cell.absRow
+            let row = rows |> List.item cell.absRow
+            let col = cols |> List.item cell.absCol
             (cell, intersectionCandidates row col existingInNonet)
 
         let isEmptyCell x = match x.value with | NoValue -> true | ValidValue _ -> false
         let isNotEmptyCell x = not (isEmptyCell x)
+
         let findCandidatesInNonet rows cols (nonet : Nonet) = 
-            printfn "Nonet #%A" nonet.num
+            //printfn "Nonet #%A" nonet.num
             let existingCellValues = nonet.cells |> List.filter isNotEmptyCell |> cellValues |> Set.ofList
             let cellsWithCandidates = nonet.cells |> List.filter isEmptyCell |> List.map (intersectionCandidatesForCell rows cols existingCellValues) 
              
