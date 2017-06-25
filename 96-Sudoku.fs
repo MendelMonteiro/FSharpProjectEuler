@@ -155,7 +155,7 @@ module Sudoku =
 
         rawLines   
         |> List.chunkBySize (1 + NonetSize * BoardSize)
-        |> List.take 1
+        //|> List.take 1
         |> List.map parseBoard
         
     let cellValues cells =
@@ -262,9 +262,12 @@ module Sudoku =
     let answer = 
         let filePath = "C:\Users\Mendel\Documents\Visual Studio 2015\Projects\ProjectEuler\p096_sudoku.txt"
         let rawLines = System.IO.File.ReadLines(filePath)
-        let board = parseFile (rawLines |> List.ofSeq) |> List.head
-        printfn "%A" board
+        parseFile (rawLines |> List.ofSeq) |> List.map (fun board -> 
+            printfn "%A" board
 
-        printfn "\r\nFilled in candidates\r\n"
-        let candidatesFilled = fillInCandidates board
-        printfn "%A" candidatesFilled
+            //printfn "\r\nFilled in candidates\r\n"
+            let candidatesFilled = fillInCandidates board
+            printfn "%A" candidatesFilled
+            )
+
+        
