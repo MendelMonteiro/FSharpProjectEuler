@@ -10,16 +10,6 @@ module Sudoku =
     [<Literal>]
     let BoardSize = 3
     
-    /// Converts a string into a list of characters.
-    let explode (s : string) = 
-        [ for c in s -> c ]
-    
-    /// Converts a list of characters into a string.
-    let implode (xs : char list) = 
-        let sb = System.Text.StringBuilder(xs.Length)
-        xs |> List.iter (sb.Append >> ignore)
-        sb.ToString()
-
     type CellValue =
         | ValidValue of int
         | NoValue
@@ -34,17 +24,20 @@ module Sudoku =
         | ValidValue v -> true
         | NoValue -> false
 
+    [<StructuredFormatDisplay("({col}, {row})")>]
+    type Position = { row : int; col : int }
+    
     [<StructuredFormatDisplay("({col}, {row}) => {Display}")>]
     type Cell = 
         { row : int
           col : int
           value : CellValue }
-        
         member m.Display = printCellValue m.value
     
     [<StructuredFormatDisplay("{cells}")>]
     type Nonet = 
-        { cells : Cell list
+        { num : int
+          cells : Cell list
           rows : Cell list list
           cols : Cell list list }
     
@@ -67,13 +60,30 @@ module Sudoku =
         { cell : Cell
           candidates : int list }
     
-    [<StructuredFormatDisplay("{name} {nonets}")>]
+    [<StructuredFormatDisplay("{AsString}")>]
     type Board = 
         { name : string
           nonets : Nonet list
           horizontalLines : Line list
-          verticalLines : Line list }
+          verticalLines : Line list } with
+
+        member this.print =
+            let printCell c = (printCellValue c.value) 
+            let wrap s = "|" + s + "|"
+            printfn "%A" this.name
+            let printNonetRow boardRow nonetRow = 
+                (this.nonets
+                |> List.skip (boardRow * BoardSize)
+                |> List.take BoardSize
+                |> List.map (fun n -> wrap ( n.cells |> List.skip (nonetRow * NonetSize) |> List.take NonetSize |> List.map printCell |> String.concat "|" ) ) |> String.concat " ")
+            let printBoardRow = List.map (fun boardRow -> [0..2] |> List.map (fun nonetRow -> printNonetRow boardRow nonetRow))
+            let output = ( [0..2] |> printBoardRow ) |> List.map (fun x -> x |> String.concat System.Environment.NewLine) |> String.concat (System.Environment.NewLine + System.Environment.NewLine)
+            output
+
+        member m.AsString = m.print
     
+    // Start functions
+
     let parseNonetFromRaw nonetLines horizontalPos =
         let parseNonetValue x =
             match x with
@@ -97,36 +107,33 @@ module Sudoku =
                     |> parseNonetLine i))
             |> List.concat
         
-        let r = vals |> List.chunkBySize NonetSize
-        { cells = vals; rows = r; cols = r |> transpose }
+        let rowCells = vals |> List.chunkBySize NonetSize
+        { num = horizontalPos; cells = vals; rows = rowCells; cols = rowCells |> transpose }
     
-    let attachCellsToNonets f xs = 
-        xs |> List.map (fun nonet -> 
-                  nonet
-                  |> f
-                  |> List.map (fun line -> line |> List.map (fun cell -> cell)))
+    let extractCellsFrom getCells xs = 
+        xs |> List.map (fun nonet -> nonet |> getCells |> List.map (fun line -> line |> List.map (fun cell -> cell)))
     
+    let getHorizontalLines xs = 
+        xs
+        |> extractCellsFrom (fun nonet -> nonet.rows)
+        |> List.chunkBySize (BoardSize)
+        |> List.collect (transpose)
+        |> List.map (fun xs -> xs |> List.concat)
+        
+    let getVerticalLines xs = 
+        xs
+        |> extractCellsFrom (fun nonet -> nonet.cols)
+        |> List.concat
+        |> List.chunkBySize (NonetSize)
+        |> List.chunkBySize (BoardSize)
+        |> transpose
+        |> List.collect transpose
+        |> List.map List.concat
+
+    // Transform the file into nonets
     let parseFile rawLines = 
         let parseBoard (name :: rawNonetLines : string list) = 
-            let getHorizontalLines xs = 
-                xs
-                |> attachCellsToNonets (fun nonet -> nonet.rows)
-                |> List.chunkBySize (BoardSize)
-                |> List.collect (transpose)
-                |> List.map (fun xs -> xs |> List.concat)
             
-            let getVerticalLines xs = 
-                xs
-                |> attachCellsToNonets (fun nonet -> nonet.cols)
-                |> List.concat
-                |> List.chunkBySize (NonetSize)
-                |> List.chunkBySize (BoardSize)
-                |> transpose
-                |> List.collect transpose
-                |> List.map List.concat
-            
-            //printfn "Board name %A" name
-            //printfn "Raw lines %A" rawNonetLines
             let nonets = 
                 rawNonetLines
                 |> List.chunkBySize NonetSize
@@ -150,63 +157,60 @@ module Sudoku =
                                        | ValidValue v -> Some v
                                        | NoValue -> None)
 
+    // Fill in candidates method
     let fillInCandidates board =
-        let lineCandidates cells rowIndex colIndex =
-            let candidates = cells |> cellValues
-            let ret = [1..9] |> List.except candidates
+        let candidatesInLine cells =
+            let existing = cells |> cellValues
+            let ret = [1..9] |> List.except existing
             ret
         
-        let intersectionCandidates row rowIndex col colIndex =
-            let candidateSet = Set.ofList (lineCandidates row rowIndex colIndex) |> Set.intersect (Set.ofList (lineCandidates col rowIndex colIndex))
-            candidateSet
+        let intersectionCandidates row col existingInNonet =
+            let rowCandidates = candidatesInLine row
+            let colCandidates = candidatesInLine col
+            let candidateSet = Set.ofList rowCandidates |> Set.intersect (Set.ofList colCandidates)
+            let withoutExisting = candidateSet - existingInNonet
+            withoutExisting
 
-        let getAllCandidates (row : Line) rowIndex col colIndex =
-            let cell = List.item colIndex row
-            let candidates = match cell.value with
-                             | NoValue -> List.ofSeq (intersectionCandidates row rowIndex col colIndex)
-                             | ValidValue v -> []
+        let intersectionCandidatesForCell rows cols existingInNonet cell =
+            let row = rows |> List.item cell.col
+            let col = cols |> List.item cell.row
+            (cell, intersectionCandidates row col existingInNonet)
+
+        let isEmptyCell x = match x.value with | NoValue -> true | ValidValue _ -> false
+        let isNotEmptyCell x = not (isEmptyCell x)
+        let findCandidatesInNonet rows cols (nonet : Nonet) = 
+            let existingCellValues = nonet.cells |> List.filter isNotEmptyCell |> cellValues |> Set.ofList
+            let cellsWithCandidates = nonet.cells |> List.filter isEmptyCell |> List.map (intersectionCandidatesForCell rows cols existingCellValues) 
              
-            let onlyOneCandidates = if candidates.Length = 1 then candidates else []
+            let candidatesOnlyValidInOneCell = 
+                cellsWithCandidates 
+                    |> List.map (fun (_, candidates) -> candidates) 
+                    |> Seq.concat 
+                    |> Seq.countBy (fun x -> x) 
+                    |> Seq.filter (fun (_, count) -> count = 1)
 
-            let cellWithCandidate = { cell = cell
-                                      candidates = onlyOneCandidates }
-            cellWithCandidate
+            let findFirstCellForCandidate (x, _) = 
+                let matchingCell = cellsWithCandidates |> Seq.find (fun (_, candidates) -> candidates |> Set.contains x)
+                (fst matchingCell, x)
+            candidatesOnlyValidInOneCell |> Seq.map findFirstCellForCandidate
         
-        let findCandidates rows cols = 
-            rows
-            |> List.mapi (fun i row -> cols |> List.mapi (fun j col -> getAllCandidates row i col j))
-        
-        let assignDefiniteCandidates candidates =
-            let assign cell =
-                match cell.candidates with
-                | [x] -> { cell = { row = cell.cell.row; col = cell.cell.col; value = ValidValue x }; candidates = [] }
-                | [] -> cell
-                | _ -> cell
+        let toCellsWithCandidates nonet rows cols = 
+            let blankCellsWithCandidates = nonet |> (findCandidatesInNonet rows cols)
+            let tryGetCandidates c = 
+                let matching = blankCellsWithCandidates |> Seq.tryFind (fun (cell, _) -> cell = c) 
+                match matching with
+                | Some (_, v) -> [v]
+                | None -> []
+            nonet.cells |> List.map (fun c -> {cell = c; candidates = (tryGetCandidates c)})
 
-            candidates 
-            |> List.map (fun row -> row |> List.map (fun cell -> assign cell))
+        let findCandidates nonet = toCellsWithCandidates nonet board.horizontalLines board.verticalLines 
 
-        let hasAssignable (c : CellWithCandidates list list) = 
-            let onlyOneCandidate = c |> List.concat |> List.filter (fun cell -> cell.candidates.Length = 1)
-            onlyOneCandidate.Length > 0
-        
-        let candidates = findCandidates board.horizontalLines board.verticalLines
-
-        let toNonets cellList =
-            let rowsFromNonet nonet =
-                nonet
-                |> List.chunkBySize NonetSize
-                
+        let cellsToNonet num nonet = 
+            let rowsFromNonet nonet = nonet |> List.chunkBySize NonetSize
             let colsFromNonet nonet = nonet |> rowsFromNonet |> transpose
+            { num = num; cells = nonet; rows = nonet |> rowsFromNonet; cols = nonet |> colsFromNonet }
 
-            cellList
-            |> List.map (fun cells -> cells |> List.chunkBySize NonetSize)
-            |> transpose
-            |> List.map (fun nonet -> nonet |> List.map List.concat)
-            |> List.concat
-            |> List.map (fun nonet -> { cells = nonet; rows = nonet |> rowsFromNonet; cols = nonet |> colsFromNonet })
-
-        let toVerticalLines (cellList : Cell list list list) =
+        let toVerticalLines cellList =
             cellList
             |> transpose
             |> List.map transpose
@@ -216,33 +220,41 @@ module Sudoku =
             cellList
             |> List.map List.concat
 
-        let toBoard cellList =
-            let nonets = toNonets cellList
+        let assign cell =
+                match cell.candidates with
+                | [x] -> { cell = { row = cell.cell.row; col = cell.cell.col; value = ValidValue x }; candidates = [] }
+                | _ -> cell
+        
+        let ignoreCandidates x = x |> List.map (fun y -> y.cell)
+        let findAndAssignCandidates nonet = findCandidates nonet |> List.map assign |> ignoreCandidates
+
+        let replaceNonetIn board nonetIndex nonet = 
+            let switchAt i x j y = if i = j then x else y
+            let nonets = (board.nonets |> List.mapi (switchAt nonetIndex nonet))
             { name = board.name;
               nonets = nonets;
-              horizontalLines = toHorizontalLines cellList;
-              verticalLines = toVerticalLines cellList }
+              horizontalLines = board.nonets |> getHorizontalLines
+              verticalLines = board.nonets |> getVerticalLines }
 
-        let assignable = hasAssignable candidates
-        printfn "Has assignable: %A" assignable
+        let rec assignAndReplaceBoard board nonetIndex =
+            let currentNonet = board.nonets |> List.skip nonetIndex |> List.tryHead
+            match currentNonet with
+            | Some n -> let newBoard = findAndAssignCandidates n
+                                        |> cellsToNonet n.num
+                                        |> replaceNonetIn board nonetIndex
+                        assignAndReplaceBoard newBoard (nonetIndex + 1)
+            | _ -> board
+            
+        assignAndReplaceBoard board 0
 
-        let assigned = candidates |> assignDefiniteCandidates
-        let nonets = assigned |> List.map (fun x -> x |> List.map (fun y -> y.cell)) |> List.map (fun x -> x |> List.chunkBySize NonetSize)
-        nonets |> printLines
-        toBoard nonets
 
+    // Find the answer
     let answer = 
         let filePath = "C:\Users\Mendel\Documents\Visual Studio 2015\Projects\ProjectEuler\p096_sudoku.txt"
         let rawLines = System.IO.File.ReadLines(filePath)
         let board = parseFile (rawLines |> List.ofSeq) |> List.head
-        printfn "Horizontal lines"
-        board.horizontalLines |> printLines
-        printfn "Vertical lines"
-        board.verticalLines |> printLines
+        printfn "%A" board
 
         printfn "Filled in candidates"
         let candidatesFilled = fillInCandidates board
-        printfn "Horizontal lines"
-        candidatesFilled.horizontalLines |> printLines
-        printfn "Vertical lines"
-        candidatesFilled.verticalLines |> printLines
+        printfn "%A" candidatesFilled
