@@ -31,6 +31,8 @@ module Sudoku =
     type Cell = 
         { row : int
           col : int
+          absRow : int
+          absCol : int
           value : CellValue }
         member m.Display = printCellValue m.value
     
@@ -84,16 +86,19 @@ module Sudoku =
     
     // Start functions
 
-    let parseNonetFromRaw nonetLines horizontalPos =
+    let parseNonetFromRaw verticalPos nonetLines horizontalPos =
         let parseNonetValue x =
             match x with
             | 0 -> NoValue
             | _ -> ValidValue x
      
+        let offset = horizontalPos * NonetSize
         let parseNonetLine r chars = 
             chars |> List.mapi (fun c x -> 
                          { row = r
                            col = c
+                           absRow = verticalPos * NonetSize + r 
+                           absCol = offset + c
                            value = System.Int32.Parse(x.ToString()) |> parseNonetValue  })
         
         // 3 lines with other nonets in it
@@ -102,7 +107,7 @@ module Sudoku =
             |> List.take NonetSize
             |> List.mapi (fun i x -> 
                    (explode x
-                    |> List.skip (horizontalPos * NonetSize)
+                    |> List.skip offset
                     |> List.take NonetSize
                     |> parseNonetLine i))
             |> List.concat
@@ -137,7 +142,8 @@ module Sudoku =
             let nonets = 
                 rawNonetLines
                 |> List.chunkBySize NonetSize
-                |> List.collect (fun chunk -> [ 0..(NonetSize - 1) ] |> List.map (parseNonetFromRaw chunk))
+                |> List.mapi (fun i chunk -> [ 0..(NonetSize - 1) ] |> List.map (parseNonetFromRaw i chunk))
+                |> List.concat
             
             printfn "Nonets %A" nonets.Length
             let board = 
@@ -169,16 +175,19 @@ module Sudoku =
             let colCandidates = candidatesInLine col
             let candidateSet = Set.ofList rowCandidates |> Set.intersect (Set.ofList colCandidates)
             let withoutExisting = candidateSet - existingInNonet
+            printfn "%A" col
+            printfn "%A" colCandidates
             withoutExisting
 
         let intersectionCandidatesForCell rows cols existingInNonet cell =
-            let row = rows |> List.item cell.col
-            let col = cols |> List.item cell.row
+            let row = rows |> List.item cell.absCol
+            let col = cols |> List.item cell.absRow
             (cell, intersectionCandidates row col existingInNonet)
 
         let isEmptyCell x = match x.value with | NoValue -> true | ValidValue _ -> false
         let isNotEmptyCell x = not (isEmptyCell x)
         let findCandidatesInNonet rows cols (nonet : Nonet) = 
+            printfn "Nonet #%A" nonet.num
             let existingCellValues = nonet.cells |> List.filter isNotEmptyCell |> cellValues |> Set.ofList
             let cellsWithCandidates = nonet.cells |> List.filter isEmptyCell |> List.map (intersectionCandidatesForCell rows cols existingCellValues) 
              
@@ -222,7 +231,7 @@ module Sudoku =
 
         let assign cell =
                 match cell.candidates with
-                | [x] -> { cell = { row = cell.cell.row; col = cell.cell.col; value = ValidValue x }; candidates = [] }
+                | [x] -> { cell = { row = cell.cell.row; col = cell.cell.col; absRow = cell.cell.absRow; absCol = cell.cell.absCol; value = ValidValue x }; candidates = [] }
                 | _ -> cell
         
         let ignoreCandidates x = x |> List.map (fun y -> y.cell)
@@ -255,6 +264,6 @@ module Sudoku =
         let board = parseFile (rawLines |> List.ofSeq) |> List.head
         printfn "%A" board
 
-        printfn "Filled in candidates"
+        printfn "\r\nFilled in candidates\r\n"
         let candidatesFilled = fillInCandidates board
         printfn "%A" candidatesFilled
