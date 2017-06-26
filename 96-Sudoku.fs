@@ -145,7 +145,6 @@ module Sudoku =
                 |> List.mapi (fun i chunk -> [ 0..(NonetSize - 1) ] |> List.map (parseNonetFromRaw i chunk))
                 |> List.concat
             
-            printfn "Nonets %A" nonets.Length
             let board = 
                 { name = name
                   nonets = nonets
@@ -163,6 +162,11 @@ module Sudoku =
                                        | ValidValue v -> Some v
                                        | NoValue -> None)
 
+    let validateBoard board =
+        let horizontalDuplicates = board.horizontalLines |> List.map (fun xs -> xs |> getDuplicates |> List.length)
+        let verticalDuplicates = board.verticalLines |> List.map (fun xs -> xs |> getDuplicates |> List.length)
+        horizontalDuplicates |> List.forall ((=) 0) && verticalDuplicates |> List.forall ((=) 0) 
+
     // Fill in candidates method
     let rec fillInCandidates board =
         let candidatesInLine cells =
@@ -179,7 +183,7 @@ module Sudoku =
             //printfn "%A" colCandidates
             withoutExisting
 
-        let intersectionCandidatesForCell rows cols existingInNonet cell =
+        let intersectionCandidatesForCell (rows : Line list) (cols : Line list) (existingInNonet : Set<int>) (cell : Cell) =
             let row = rows |> List.item cell.absRow
             let col = cols |> List.item cell.absCol
             (cell, intersectionCandidates row col existingInNonet)
@@ -252,11 +256,13 @@ module Sudoku =
             | _ -> (assignedCandidates, board)
             
         let (assignedCandidates, newBoard) = assignAndReplaceBoard board 0 false
-        if assignedCandidates then
-            fillInCandidates newBoard
+        if not (validateBoard newBoard) then 
+            failwith "Board is not consistent"
         else
-            newBoard
-
+            if assignedCandidates then
+                fillInCandidates newBoard
+            else
+                newBoard
 
     // Find the answer
     let answer = 
@@ -267,6 +273,7 @@ module Sudoku =
 
             //printfn "\r\nFilled in candidates\r\n"
             let candidatesFilled = fillInCandidates board
+            let isValid = validateBoard candidatesFilled
             printfn "%A" candidatesFilled
             )
 

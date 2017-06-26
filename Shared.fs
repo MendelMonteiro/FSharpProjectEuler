@@ -33,3 +33,12 @@
         xs |> List.iter (sb.Append >> ignore)
         sb.ToString()
 
+    let getDuplicates (xs : 'a list) =
+        let dupes = 
+            xs |> List.fold (fun output x -> 
+                let existing = output |> Map.tryFind x
+                match existing with
+                | Some c -> output |> Map.add x (c + 1)
+                | _ -> output |> Map.add x 1
+                ) Map.empty<'a, int>
+        dupes |> Map.filter (fun _ i -> i > 1) |> Map.toList |> List.map fst

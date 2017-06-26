@@ -17,4 +17,7 @@ list |> transpose
 list |> List.map transpose |> transpose
 list |>  transpose |> List.map transpose
 
-let input = [1..10]
+let input = ['a'; 'b'; 'b'; 'c']
+
+
+getDuplicates input
