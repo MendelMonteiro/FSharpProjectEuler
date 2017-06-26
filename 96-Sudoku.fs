@@ -85,7 +85,6 @@ module Sudoku =
         member m.AsString = m.print
     
     // Start functions
-
     let parseNonetFromRaw verticalPos nonetLines horizontalPos =
         let parseNonetValue x =
             match x with
@@ -118,6 +117,7 @@ module Sudoku =
     let extractCellsFrom getCells xs = 
         xs |> List.map (fun nonet -> nonet |> getCells |> List.map (fun line -> line |> List.map (fun cell -> cell)))
     
+    // Convert all the rows in the nonets to a list of rows
     let getHorizontalLines xs = 
         xs
         |> extractCellsFrom (fun nonet -> nonet.rows)
@@ -125,6 +125,7 @@ module Sudoku =
         |> List.collect (transpose)
         |> List.map (fun xs -> xs |> List.concat)
         
+    // Convert all the columns in the nonets to a list of columns
     let getVerticalLines xs = 
         xs
         |> extractCellsFrom (fun nonet -> nonet.cols)
@@ -157,11 +158,13 @@ module Sudoku =
         //|> List.take 1
         |> List.map parseBoard
         
+    // Return either valid cell values or None
     let cellValues cells =
         cells |> List.choose (fun x -> match x.value with 
                                        | ValidValue v -> Some v
                                        | NoValue -> None)
 
+    // Validate that there are no duplicate numbers in rows or columns
     let validateBoard board =
         let horizontalDuplicates = board.horizontalLines |> List.map (fun xs -> xs |> getDuplicates |> List.length)
         let verticalDuplicates = board.verticalLines |> List.map (fun xs -> xs |> getDuplicates |> List.length)
@@ -174,6 +177,7 @@ module Sudoku =
             let ret = [1..9] |> List.except existing
             ret
         
+        // Find all candidates that don't already exist in the given row or column
         let intersectionCandidates row col existingInNonet =
             let rowCandidates = candidatesInLine row
             let colCandidates = candidatesInLine col
@@ -183,6 +187,7 @@ module Sudoku =
             //printfn "%A" colCandidates
             withoutExisting
 
+        // Find all candidates that don't already exist in the cell's row or column
         let intersectionCandidatesForCell (rows : Line list) (cols : Line list) (existingInNonet : Set<int>) (cell : Cell) =
             let row = rows |> List.item cell.absRow
             let col = cols |> List.item cell.absCol
@@ -191,6 +196,7 @@ module Sudoku =
         let isEmptyCell x = match x.value with | NoValue -> true | ValidValue _ -> false
         let isNotEmptyCell x = not (isEmptyCell x)
 
+        // Find candidates for all cells in a nonet
         let findCandidatesInNonet rows cols (nonet : Nonet) = 
             //printfn "Nonet #%A" nonet.num
             let existingCellValues = nonet.cells |> List.filter isNotEmptyCell |> cellValues |> Set.ofList
@@ -208,6 +214,7 @@ module Sudoku =
                 (fst matchingCell, x)
             candidatesOnlyValidInOneCell |> Seq.map findFirstCellForCandidate
         
+        // Find all candidates and convert output to cells with candidates
         let toCellsWithCandidates nonet rows cols = 
             let blankCellsWithCandidates = nonet |> (findCandidatesInNonet rows cols)
             let tryGetCandidates c = 
@@ -219,11 +226,13 @@ module Sudoku =
 
         let findCandidates nonet = toCellsWithCandidates nonet board.horizontalLines board.verticalLines 
 
+        // Convert cells to a nonet
         let cellsToNonet num nonet = 
             let rowsFromNonet nonet = nonet |> List.chunkBySize NonetSize
             let colsFromNonet nonet = nonet |> rowsFromNonet |> transpose
             { num = num; cells = nonet; rows = nonet |> rowsFromNonet; cols = nonet |> colsFromNonet }
 
+        // If there is only one candidate left in this cell, assign it to the cell value
         let assign cell =
                 match cell.candidates with
                 | [x] -> { cell = { row = cell.cell.row; col = cell.cell.col; absRow = cell.cell.absRow; absCol = cell.cell.absCol; value = ValidValue x }; candidates = [] }
@@ -231,12 +240,14 @@ module Sudoku =
         
         let ignoreCandidates x = x |> List.map (fun y -> y.cell)
 
+        // Find and assign the candidates in the given nonet
         let findAndAssignCandidates nonet = 
             let candidates = findCandidates nonet 
             let hasAssignable = candidates |> List.exists (fun c -> c.candidates.Length = 1)
             let assigned = candidates |> List.map assign |> ignoreCandidates
             (hasAssignable, assigned)
 
+        // Replace a nonet in the given board
         let replaceNonetIn board nonetIndex nonet = 
             let switchAt i x j y = if i = j then x else y
             let nonets = (board.nonets |> List.mapi (switchAt nonetIndex nonet))
@@ -245,6 +256,7 @@ module Sudoku =
               horizontalLines = board.nonets |> getHorizontalLines
               verticalLines = board.nonets |> getVerticalLines }
 
+        // Recursively assign all viable candidates and return the new board
         let rec assignAndReplaceBoard board nonetIndex assignedCandidates =
             let currentNonet = board.nonets |> List.skip nonetIndex |> List.tryHead
             match currentNonet with
@@ -274,6 +286,7 @@ module Sudoku =
             //printfn "\r\nFilled in candidates\r\n"
             let candidatesFilled = fillInCandidates board
             let isValid = validateBoard candidatesFilled
+            printfn "IsValid: %A" isValid
             printfn "%A" candidatesFilled
             )
 
